@@ -1,0 +1,17 @@
+name: RDP
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install XFCE and XRDP
+        run: |
+          sudo apt update
+          sudo apt install -y xfce4 xfce4-goodies xrdp
+          sudo systemctl enable xrdp --now
+          echo "xfce4-session" >~/.xsession
+          sudo ufw allow 3389
+          sudo passwd $USER <<< $'password\npassword' # Ganti 'password' dengan kata sandi yang diinginkan
+      - name: Keep the connection alive
+        run: sleep 43200
