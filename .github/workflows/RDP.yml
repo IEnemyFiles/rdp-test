@@ -7,27 +7,35 @@ jobs:
     steps:
       - name: Install XFCE and XRDP
         run: |
-          # Update dan install paket
+          # Update and install packages
           sudo apt update
           sudo apt install -y xfce4 xfce4-goodies xrdp
           
-          # Aktifkan XRDP
+          # Enable and start XRDP
           sudo systemctl enable xrdp --now
           
-          # Set session ke XFCE
-          echo "xfce4-session" | sudo tee -a ~/.xsession
-
-          # Buka port 3389 untuk koneksi RDP
+          # Set session to XFCE
+          echo "xfce4-session" >~/.xsession
+          
+          # Open port 3389 for RDP
           sudo ufw allow 3389
-
-          # Mengatur kata sandi root menjadi 'CobaDulu987@'
+          
+          # Set root password to 'CobaDulu987@'
           echo "root:CobaDulu987@" | sudo chpasswd
           
-          # Pastikan root bisa login dengan XRDP
+          # Log IP address, username, and password
+          IP_ADDRESS=$(hostname -I | awk '{print $1}')
+          USERNAME="root"
+          PASSWORD="CobaDulu987@"
+          echo "RDP setup complete!"
+          echo "IP Address: $IP_ADDRESS"
+          echo "Username: $USERNAME"
+          echo "Password: $PASSWORD"
+          # Allow root login for XRDP
           sudo sed -i 's/^#AllowRoot/AllowRoot/' /etc/xrdp/xrdp.ini
           
-          # Pastikan XRDP dapat digunakan dengan root
+          # Restart XRDP service to apply changes
           sudo service xrdp restart
           
-      - name: Keep the connection alive
-        run: sleep 604800
+      - name: Keep the connection alive for 7 Days
+        run: sleep 604800   # 7 Days in seconds
